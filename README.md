@@ -1,25 +1,25 @@
 # linuxserverconfiguration
-# About:
+## About:
 
 This is the 6th project in udacity about the linux server.
 
-# Details of my server:
+## Details of my server:
 
 13.127.33.67.xip.io
 
-# Url site:
+## Url site:
 
 https://13.127.33.67.xip.io/
 
-# Password of grader:
+## Password of grader:
 
 jash
 
-# Latest version to update:
+## Latest version to update:
 
 sudo apt-get update
 
-# Grader key:
+## Grader key:
 
 -----BEGIN RSA PRIVATE KEY-----
 MIIEpQIBAAKCAQEAySyqm+/Kr8/UB3SVoi5L68qjtQX3F0JKT9KtCZn1SxRXl+H2
@@ -54,52 +54,52 @@ lTCD8P9woMTv6bwvNA18s/GqjvLXwDn4Fw29CARrd0h/7al8eTQexho=
 ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDJLKqb78qvz9QHdJWiLkvryqO1BfcXQkpP0q0JmfVLFFeX4fb7P3CDnf4ACVYC4PJ+qFT40rCLLFAJLgvSCViQsanwhclceEriH8smjkGfTMigRYcXxyW/wQMbjdGYbxnXc+8v/eVvVLnLHlrhFn+13iafGxlAfF6XLGV30S4g6/jEiZDg8YrxmsmfiGvKgplH67eT1qXF86Mff/Kb75JQWenJK7U1GoJ/v6Im+wOj+4GJgc6JcJeTRgWfk3J7HZdV+qieQMRPGh6Kwm3pQj+EDJ3TAc26lackrTZnQbcRL3IYtdjLedLDngQEz5IdrJozt34nzYLu9ZFMROYFuJLh
 
 
-#  connecting the grader:
+##  connecting the grader:
 
 ssh -i path/to/privatekey -p 2200 grader@13.127.33.67
 
-# Creating grader user:
+## Creating grader user:
 
 sudo adduser grader
 
-# give permissions to new user:
+## give permissions to new user:
 
 sudo nano /etc/sudoers
 
-# In the root user add the line:
+## In the root user add the line:
 
 grader ALL=(ALL:ALL) ALL => give sudo permissions to grader.
 
-# For a grader to form a ssh key pair:
+## For a grader to form a ssh key pair:
  
  ssh-keygen => generate a public and private ssh keys and saved to .ssh folder.
  
- # putty software:
+ ## putty software:
  
  Generate a private keys with default file.
  
  Open virtual machine in putty and change to grader user:
  su - grader
  
- # Generate a new directory .ssh to authorized_keys:
+ ## Generate a new directory .ssh to authorized_keys:
  
   mkdir.ssh
   
-  # create a file in that folder:
+  ## create a file in that folder:
   
   sudo nano .ssh/authorized_keys => save the file with .pub extension to authorized_keys.
   
-  # Give permissions to directory:
+  ## Give permissions to directory:
   
   chmod 700 .ssh
   
   chmod 644 .ssh/authorized_keys
   
-  # Restart the ssh server:
+  ## Restart the ssh server:
   
   service ssh restart
   
-  # port changing:
+  ## port changing:
   
   ssh -i .ssh/id_rsa grader@13.127.33.67(in editor)
   sudo nano /etc/ssh/sshd_config
@@ -107,19 +107,19 @@ grader ALL=(ALL:ALL) ALL => give sudo permissions to grader.
   restart the ssh server:
   service ssh restart
   
-  # Login to grader:
+  ## Login to grader:
   
   ssh -i .ssh/id_rsa grader@13.127.33.67
   
-  # Disabling root as ssh login:
+  ## Disabling root as ssh login:
   
   sudo nano /etc/ssh/sshd_config
   
-  # Preventing root:
+  ## Preventing root:
   
   change PermitRootLogin preventing passwored to "no"
   
-  #  Safety Firewall commands:
+  ##  Safety Firewall commands:
   
   sudo ufw default deny incoming 
   
@@ -131,46 +131,148 @@ grader ALL=(ALL:ALL) ALL => give sudo permissions to grader.
 
   sudo ufw enable
   
-  # Checking the status:
+  ## Checking the status:
   
   sudo ufw status => allowing ports to display.
   
-  # Apache2 installing:
+  ## Apache2 installing:
   
   sudo apt-get install apache2
   
-  # Mod_wsgi:
+  ## Mod_wsgi:
   
   sudo apt-get install python-setuptools libapache2-mod-wsgi
   
-  # Enable mod_wsgi:
+  ## Enable mod_wsgi:
   
   sudo a2enmod wsgi
   
-  # New directory creating:
+  ## New directory creating:
   
   In /var/www directory create a new folder -> sudo mkdir FlaskApp
                                                cd FlaskApp
                                                
-   # git installation:
+   ## git installation:
    
    sudo apt-get install git
    
-   # clone your github repository:
+   ## clone your github repository:
    
    sudo git clone https://github.com/username/catalog.git
    
-   # changing the project file:
+   ## changing the project file:
    
    __init__.py
    
+   ## Add json file:
    
-  
-  
-  
- 
- 
- 
+   sudo nano __init__.py
+   PROJECT_ROOT = os.path.realpath(os.path.dirname(__file__))
+   json_url = os.path.join(PROJECT_ROOT, 'client_secrets.json')
+   
+   save(ctrl+o) and exit(ctrl+x)
+   
+   ## Create wsgi file:
+   
+   cd /var/www/FlaskApp
+   sudo nano flaskapp.wsgi
+   
+   Add the following code in wsgi file:
+   
+   #!/usr/bin/python
+   import sys
+   import logging
+   logging.basicConfig(stream=sys.stderr)
+   sys.path.insert(0,"/var/www/FlaskApp/")
+   from FlaskApp import app as application
+   application.secret_key = 'Add your secret key'
+   
+   ## Installed softwares:
+   
+   pip install sqlalchemy
+   pip install flask
+   pip install oauth2client
+   pip install pyscopg2
+   pip install requests
+   
+   ## Postgres installing command:
+   
+   sudo apt-get install postgresql
+   
+   ## Postgres login:
+   
+   sudo su - postgres
+   psql => postgres shell
+   
+   ## Create a new database in postgres:
+   
+   CREATE USER catalog WITH PASSWORD 'password';
+   
+   ## Give permissions to new database:
+   
+   ALTER USER catalog CREATEDB;
+   
+   ## Create a db name catalog with user catalog:
+   
+   CREATE DATABASE catalog WITH OWNER catalog;
+   
+   ## connect to db:
+   
+   \c catalog
+   
+   ## give permissions to public:
+   
+   REVOKE ALL ON SCHEMA public FROM public;
+   
+   ## grant permissions on schema for catalog:
+   
+   GRANT ALL ON SCHEMA public TO catalog;
+   
+   ## Creating a configuration file:
+   
+   sudo nano /etc/apache2/sites-available/FlaskApp.conf
 
+   In this add the following code into the .conf file:
 
+<VirtualHost *:80>
+ 	ServerName mywebsite.com
+ 	ServerAdmin admin@mywebsite.com
+ 	WSGIScriptAlias / /var/www/FlaskApp/flaskapp.wsgi
+ 	<Directory /var/www/FlaskApp/FlaskApp/>
+ 		Order allow,deny
+ 		Allow from all
+ 	</Directory>
+ 	Alias /static /var/www/FlaskApp/FlaskApp/static
+ 	<Directory /var/www/FlaskApp/FlaskApp/static/>
+ 		Order allow,deny
+ 		Allow from all
+ 	</Directory>
+ 	ErrorLog ${APACHE_LOG_DIR}/error.log
+ 	LogLevel warn
+ 	CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+Enable the virtual host sudo a2ensite FlaskApp
 
+Disabling the default apache2 page sudo a2dissite 000-default.conf
+
+-> Flask with apache2 is referred from digital ocean.
+
+## Rename the authorization details in developers console of your project:
+
+Javascript origin :
+http://ip.xip.io
+
+redirect URI:
+
+http://ip.xip.io\callback
+
+http://ip.xip.io\gconnect
+
+http://ip.xip.io\login
+
+xip.io is a free DNS which will be the same as using IP address
+
+## end step:
+
+sudo service apache2 restart
+  
